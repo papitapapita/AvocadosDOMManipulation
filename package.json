@@ -1,6 +1,7 @@
 {
   "homepage": "https://github.com/papitapapita/AvocadosDOMManipulation",
   "scripts": {
+    "deploy": "gh-pages -d src",
     "start": "snowpack dev",
     "build": "snowpack build",
     "format": "prettier --write \"src/**/*.js\"",
@@ -9,6 +10,7 @@
     "install:husky": "husky install"
   },
   "devDependencies": {
+    "gh-pages": "^5.0.0",
     "husky": "7",
     "prettier": "^2.0.5",
     "pretty-quick": "^3.1.0",

@@ -1,42 +1,43 @@
 // Set the base URL for the API
 const baseUrl = 'https://platzi-avo.vercel.app'
 
-// Construct the full URL for the API endpoint
-const url = `${baseUrl}/api/avo`;
-
-const appNode = document.querySelector('#app');
-
 // Create a function that formats prices as USD
 const newPrice = price => {
-    const newPrice = new window.Intl.NumberFormat('en-EN',{
+    return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD'
     }).format(price);
-
-    return newPrice;
 }
 
-// Define an asynchronous function to fetch data from the API
-async function fetchData(apiUrl){
-    // Fetch data from the API endpoint
-    const response = await window.fetch(apiUrl);
+// Fetch data from the API
+async function fetchAvoData() {
+    try {
+        // Fetch data from the API endpoint
+        const response = await fetch(`${baseUrl}/api/avo`);
+        // Extract JSON data from the response
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        throw new Error(err);
+    }
+}
 
-    // Extract JSON data from the response
-    const data = await response.json();
-
+// Render the avocados to the page
+function renderAvocados(avocados){
+    const appNode = document.querySelector('#app');
     // Create a new DocumentFragment to hold the generated HTML
     const fragment = new DocumentFragment();
 
     // Loop through each avocado in the data
-    data.data.forEach(element => {
+    avocados.forEach(avocado => {
         // Create a title element for the avocado
         const title = document.createElement('h2');
-        title.textContent = element.name;
+        title.textContent = avocado.name;
         title.className = 'h-8 bg-gray-200 col-span-2 rounded';
 
         // Create a price element for the avocado, using the newPrice function
         const price = document.createElement('div');
-        price.textContent = newPrice(element.price);
+        price.textContent = newPrice(avocado.price);
         price.className = 'h-8 bg-gray-200 rounded';
 
         // Create a container for the title and price elements
@@ -51,9 +52,8 @@ async function fetchData(apiUrl){
 
         // Create an image element for the avocado
         const img = document.createElement('img');
-        img.src = `${baseUrl}${element.image}`;
-        img.style.width = '100%';
-        img.style.objectFit = 'cover';
+        img.src = `${baseUrl}${avocado.image}`;
+        img.style = 'width: 100%;object-fit:cover;';
 
         // Create a figure element to hold the image element
         const figure = document.createElement('figure');
@@ -73,5 +73,10 @@ async function fetchData(apiUrl){
     appNode.append(fragment);
 }
 
-// Call the fetchData function with the URL for the avocado API endpoint
-fetchData(url);
+// Initialize the app
+async function init(){
+    const avocados = await fetchAvoData();
+    renderAvocados(avocados.data);
+}
+
+init();
